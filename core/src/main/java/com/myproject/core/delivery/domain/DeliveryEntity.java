@@ -1,4 +1,4 @@
-package com.myproject.core.order.domain;
+package com.myproject.core.delivery.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

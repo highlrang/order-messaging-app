@@ -12,12 +12,13 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
-	implementation project(':core')
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+dependencies {
+	// implementation project(':core') 여기랑 root 둘 다 해보기
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 }
