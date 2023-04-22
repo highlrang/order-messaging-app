@@ -73,6 +73,11 @@ jar {
 // 	}
 // }
 
+// project(":kafka") {
+// 	dependencies {
+// 		implementation project(":core")
+// 	}
+// }
 
 // project(":core") {
 //     // val jar: Jar by tasks

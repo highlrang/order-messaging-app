@@ -2,6 +2,6 @@ rootProject.name = 'order-app'
 include 'core'
 include 'order-api'
 // include 'store-api'
-// include 'kafka'
+include 'kafka'
 
 // include 'admin-api'
