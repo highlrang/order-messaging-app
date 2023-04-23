@@ -5,23 +5,26 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.KafkaListeners;
 import org.springframework.stereotype.Service;
 
+import com.myproject.core.order.dto.NotificationDto;
+import com.myproject.kafka.client.ExternalClient;
+
 import static com.myproject.kafka.order.enums.OrderTopic.*;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
-// @RequiredArgsConstructor
+@RequiredArgsConstructor
 public class NotificationConsumer {
     
+    private final ExternalClient externalClient;
+
     @Value("${spring.kafka.consumer.group-id}")
     private String groupId;
 
-    // private final OrderRepository orderRepository;
-
     // @KafkaListener(topics = [OrderTopic.ORDER_COMPLETE.getTopicName()], groupId = groupId) 
-    public void orderComplete(){
+    public void orderComplete(NotificationDto notificationDto){
         try{
-            // 폰번 조회 및 메세지 날리기
+            
 
         }catch(Exception e){
 
