@@ -4,3 +4,5 @@ spring:
         driver-class-name: com.mysql.cj.jdbc.Driver
         username: pfuser
         password: ${dbPassword}
+
+secretKey: ${secretKey} # with -e
