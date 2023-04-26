@@ -2,17 +2,24 @@ server:
     port: 8088
 
 spring:
+    profiles:
+        active: core
+
     kafka:
         consumer:
             bootstrap-servers: localhost:9092
-            group-id: alarm
-            # auto-offset-reset:
+            group-id: notification
+            enable-auto-commit: true
+            auto-offset-reset: latest
             key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value-deserializer: org.apache.kakfa.common.serialization.StringDeserializer
+            value-deserializer: com.myproject.kafka.serializers.CustomDeserializer
+            
+        
         producer:
             bootstrap-servers: localhost:9092
-            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value-deserializer: org.apache.kakfa.common.serialization.StringDeserializer
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: com.myproject.kafka.serializers.CustomSerializer #org.springframework.kafka.support.serializer.JsonSerializer
+
             
 
 externalClient:
