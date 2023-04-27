@@ -23,4 +23,4 @@ spring:
             
 
 externalClient:
-    url: "http://127.0.0.1:8087/api/v1"
+    uri: "http://127.0.0.1:8087/api/v1"

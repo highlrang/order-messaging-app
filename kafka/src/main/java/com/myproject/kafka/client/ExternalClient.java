@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.myproject.core.order.dto.NotificationDto;
+import com.myproject.kafka.order.dto.SmsRequestDto;
 
-@FeignClient(name = "external-client", url="${externalClient.url}")
+@FeignClient(name = "external-client", url="${externalClient.uri}")
 public interface ExternalClient {
     
-    @PostMapping(value = "/notification") // producer
-    void notification(@RequestHeader Map<String,String> header, @RequestBody NotificationDto notificationDto);
+    @PostMapping(value = "/messages", produces = "application/json; charset=UTF-8")
+    void sendMessage(@RequestHeader Map<String,String> header, @RequestBody SmsRequestDto smsRequestDto);
 
 }
