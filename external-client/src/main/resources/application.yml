@@ -6,12 +6,11 @@ naverSms:
     uri: "https://sens.apigw.ntruss.com/sms/v2/services"
     serviceId: "ncp:sms:kr:258392559149:order-messaging"
     accessKey: oBdD4C4WfQgVUm1FGvMM
-    secretKey: ${naverSmsFromKey}
+    secretKey: ${naverSmsKey}
     from: ${naverSmsFrom}
 
-    # Content-Type application/json; charset=utf-8
-    # x-ncp-apigw-timestamp UTC부터의 경과시간 timestamp (ms)
-    # x-ncp-iam-access-key accessKey
-    # x-ncp-apigw-signature-v2 secretKey
+logging:
+  level: 
+    root: DEBUG
 
 

@@ -1,5 +1,10 @@
 package com.myproject.externalclient.messages.controller;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +31,12 @@ public class MessageController {
     @PostMapping
     public void send(@RequestBody SmsRequestDto smsRequestDto){
         log.info(smsRequestDto.toString());
-        naverSmsClient.send(serviceId, smsRequestDto);
+
+        try{
+            naverSmsClient.send(serviceId, smsRequestDto);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }
