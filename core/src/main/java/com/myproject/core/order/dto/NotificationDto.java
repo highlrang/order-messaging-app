@@ -8,7 +8,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-@NoArgsConstructor // ?
+@NoArgsConstructor
 public class NotificationDto {
 
     private OrderStatus orderStatus;

@@ -24,17 +24,16 @@ public class NotificationConsumer {
     
     private final ExternalClient externalClient;
 
-    @Value("${clientServer.secretKey}")
-    private String clientHeaderKey;
+    @Value("${externalClient.naverSms.from}")
+    private String naverSmsFrom;
 
     @KafkaListener(topics = OrderTopic.ORDER_COMPLETE, groupId = "${spring.kafka.consumer.group-id}") // containerFactory = "kafkaListenerContainerFactory")
     public void orderComplete(NotificationDto notificationDto){ // @Payload
         try{
             log.info("====consumer====");
 
-            Map<String, String> header = Map.of("Authorization", EncryptionUtil.encrypt(clientHeaderKey));
-            SmsRequestDto smsRequestDto = SmsRequestDto.makeMsg(notificationDto);
-            externalClient.sendMessage(header, smsRequestDto);
+            SmsRequestDto smsRequestDto = SmsRequestDto.makeMsg(naverSmsFrom, notificationDto);
+            externalClient.sendMessage(smsRequestDto);
 
             log.info("smsRequestDto = " + smsRequestDto.toString());
 

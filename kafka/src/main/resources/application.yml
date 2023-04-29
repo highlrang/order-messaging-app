@@ -24,3 +24,5 @@ spring:
 
 externalClient:
     uri: "http://127.0.0.1:8087/api/v1"
+    naverSms:
+        from: ${naverSmsFrom}

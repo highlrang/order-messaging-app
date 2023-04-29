@@ -14,6 +14,6 @@ import com.myproject.kafka.order.dto.SmsRequestDto;
 public interface ExternalClient {
     
     @PostMapping(value = "/messages", produces = "application/json; charset=UTF-8")
-    void sendMessage(@RequestHeader Map<String,String> header, @RequestBody SmsRequestDto smsRequestDto);
+    void sendMessage(@RequestBody SmsRequestDto smsRequestDto);
 
 }

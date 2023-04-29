@@ -13,6 +13,7 @@ public class SmsRequestDto {
     private String content; // 기본 내용
     private List<MessageDto> messages; // 최대 100개
 
+    @ToString
     @Getter
     @NoArgsConstructor
     static class MessageDto{

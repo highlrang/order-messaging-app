@@ -3,14 +3,21 @@ server:
     port: 8087
 
 naverSms:
-    uri: "https://sens.apigw.ntruss.com/sms/v2/services"
+    domain: "https://sens.apigw.ntruss.com"
+    path: "/sms/v2/services/ncp:sms:kr:258392559149:order-messaging"
     serviceId: "ncp:sms:kr:258392559149:order-messaging"
-    accessKey: oBdD4C4WfQgVUm1FGvMM
+    accessKey: ugkC6gSAKALomjMNlWFs
     secretKey: ${naverSmsKey}
     from: ${naverSmsFrom}
 
 logging:
   level: 
     root: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: FULL
 
 
