@@ -2,9 +2,16 @@ package com.myproject.core.common.exception.handler;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,6 +26,15 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class CustomExceptionHandler {
     
+    @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})
+    public ResponseEntity<ApiResponse<?>> validationException(Exception e){
+        
+        log.error(e.toString() + "\n" + Arrays.toString(e.getStackTrace()));
+        
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.fail(ErrorCode.VALIDATION_EXCEPTION));
+    }
+
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiResponse<?>> customExceptionHandler(CustomException e){
 
@@ -29,13 +45,9 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(value = { NullPointerException.class, SQLException.class })
-    protected ResponseEntity<Object> NullException(NullPointerException npe, SQLException se) {
+    protected ResponseEntity<Object> NullException(Exception e) {
         
-        if(npe != null)
-            log.error(npe.toString() + "\n" + Arrays.toString(npe.getStackTrace()));
-
-        if(se != null)
-            log.error(se.toString() + "\n" + Arrays.toString(se.getStackTrace()));
+        log.error(e.toString() + "\n" + Arrays.toString(e.getStackTrace()));
             
         return ResponseEntity.internalServerError()
             .body(ApiResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR));
