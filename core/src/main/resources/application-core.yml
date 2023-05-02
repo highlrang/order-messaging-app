@@ -4,6 +4,17 @@ spring:
         driver-class-name: com.mysql.cj.jdbc.Driver
         username: pfuser
         password: ${dbPassword}
+    
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: create
 
-clientServer:
-    secretKey: ${clientHeaderKey} # with -e
+logging:
+    level:
+        root: DEBUG
+        org:
+            hibernate:
+                descriptor:
+                    sql: trace
+    

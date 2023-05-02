@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import com.myproject.core.common.domain.BaseEntity;
+import com.myproject.core.order.enums.OrderStatus;
 
 @Getter
 @Entity
@@ -30,9 +31,16 @@ public class OrderEntity extends BaseEntity{
 
     private int orderStatus;
     
+    public OrderEntity(long memberId){
+        this.memberId = memberId;
+        this.orderName = "";
+        this.orderStatus = OrderStatus.ORDER_PROCESSING.getStatus();
+    }
+
     public void setOrderInfo(String orderName, int orderPrice){
         this.orderName = orderName;
         this.orderPrice = orderPrice;
+        this.orderStatus = OrderStatus.ORDER_COMPLETE.getStatus();
     }
 
     

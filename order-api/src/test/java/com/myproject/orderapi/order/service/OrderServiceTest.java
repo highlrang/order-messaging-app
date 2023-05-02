@@ -15,13 +15,18 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.myproject.core.common.enums.ErrorCode;
 import com.myproject.core.common.exception.CustomException;
 import com.myproject.core.order.domain.OrderEntity;
 import com.myproject.core.order.domain.OrderProductEntity;
+import com.myproject.core.order.dto.OrderCollectionDto;
+import com.myproject.core.order.dto.OrderDto;
+import com.myproject.core.order.dto.OrderProductDto;
 import com.myproject.core.order.enums.OrderStatus;
 import com.myproject.core.order.repository.OrderProductRepository;
 import com.myproject.core.order.repository.OrderRepository;
@@ -37,6 +42,7 @@ public class OrderServiceTest {
     @Mock ProductRepository productRepository;
     @Mock OrderRepository orderRepository;
     @Mock OrderProductRepository orderProductRepository;
+    @InjectMocks OrderService orderService;
     
     @Test
     @DisplayName("회원의 주문 완료")
@@ -105,18 +111,19 @@ public class OrderServiceTest {
             .thenReturn(orderProductEntites);
 
         /* ========================= WHEN ============================ */
-        OrderService orderService = new OrderService();
         OrderProductDto orderProductOneDto = new OrderProductDto(productOneId, orderOnePrice, productOneQuantity);
         OrderProductDto orderProductTwoDto = new OrderProductDto(productTwoId, orderTwoPrice, productTwoQuantity);
-        OrderRequestDto orderRequestDto = new OrderRequestDto(memberId, Arrays.asList(orderProductOneDto, orderProductTwoDto));
-        OrderCollectionDto orderCollectionDto = orderService.createOrder(orderRequestDto);
-        OrderResponseDto orderResponseDto = orderCollectionDto.getOrderDto();
+        List<OrderProductDto> orderProductDtos = Arrays.asList(orderProductOneDto, orderProductTwoDto);
+
+        OrderCollectionDto orderCollectionDto = orderService.createOrder(memberId, orderProductDtos);
+        
+        OrderDto orderDto = orderCollectionDto.getOrderDto();
         List<OrderProductDto> orderProductDtoList = orderCollectionDto.getOrderProductDtos();
         
 
         /* ========================= THEN ============================ */
-        assertNotEquals(orderResponseDto.getOrderId(), 0);
-        assertEquals(givenOrderEntity.getOrderPrice(), orderResponseDto.getOrderPrice());
+        assertNotEquals(orderDto.getOrderId(), 0);
+        assertEquals(givenOrderEntity.getOrderPrice(), orderDto.getOrderPrice());
         assertEquals(orderProductEntites.size(), orderProductDtoList.size());
         
         for(int i=0; i<orderProductDtoList.size(); i++){
@@ -128,108 +135,4 @@ public class OrderServiceTest {
 
     }
 
-    @Getter
-    @AllArgsConstructor
-    class OrderRequestDto{
-        private long memberId;
-        private List<OrderProductDto> orderProductList;
-
-    }
-
-    @Getter
-    @AllArgsConstructor
-    class OrderProductDto{
-        private long productId;
-        private int orderPrice;
-        private int orderQuantity;
-
-        public OrderProductDto(OrderProductEntity e){
-            this.productId = e.getProductId();
-            this.orderPrice = e.getOrderPrice();
-            this.orderQuantity = e.getOrderQuantity();
-        }
-    }
-
-    @Getter
-    class OrderResponseDto {
-        private long orderId;
-        private long memberId;
-        private String orderName;
-        private int orderPrice;
-        private int orderStatus;
-        
-
-        public OrderResponseDto(OrderEntity e){
-            this.orderId = e.getOrderId();
-            this.memberId = e.getMemberId();
-            this.orderName = e.getOrderName();
-            this.orderPrice = e.getOrderPrice();
-            this.orderStatus = e.getOrderStatus();
-        }
-    }
-
-    @Getter
-    @AllArgsConstructor
-    class OrderCollectionDto {
-        private OrderResponseDto orderDto;
-        private List<OrderProductDto> orderProductDtos;
-
-    }
-
-    class OrderService {
-
-        public OrderService(){}
-
-        public OrderCollectionDto createOrder(OrderRequestDto orderRequestDto){
-
-            long orderId = 1l;
-            OrderEntity orderEntity = OrderEntity.builder()
-                .orderId(orderId)
-                .memberId(orderRequestDto.getMemberId())
-                .build();
-            OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
-
-            List<OrderProductEntity> orderProductEntityList = createOrderProduct(orderId, orderRequestDto);
-
-            String orderName = orderProductEntityList.size() > 1 ?
-                orderProductEntityList.get(0).getProductName() + " 외 " + orderProductEntityList.size() + "건" :
-                orderProductEntityList.get(0).getProductName();
-            int orderPrice = orderProductEntityList.stream()
-                .mapToInt(ope -> ope.getOrderPrice())
-                .sum();
-            List<OrderProductEntity> orderProductEntities = orderProductRepository.saveAll(orderProductEntityList);
-            List<OrderProductDto> orderProductDtos = orderProductEntities.stream()
-                .map(OrderProductDto::new)
-                .collect(Collectors.toList());
-            savedOrderEntity.setOrderInfo(orderName, orderPrice);
-            
-            return new OrderCollectionDto(
-                new OrderResponseDto(savedOrderEntity),
-                orderProductDtos
-                );
-            
-        }
-
-        public List<OrderProductEntity> createOrderProduct(long orderId, OrderRequestDto orderRequestDto){
-            long orderProductId = 1l;
-            List<OrderProductEntity> orderProductEntityList = new ArrayList<>();
-            for(OrderProductDto orderProductDto: orderRequestDto.getOrderProductList()){
-                ProductEntity productEntity = productRepository.findById(orderProductDto.getProductId())
-                    .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
-
-                OrderProductEntity orderProductEntity = OrderProductEntity.builder()
-                        .orderProductId(orderProductId)
-                        .orderId(orderId)
-                        .productId(orderProductDto.getProductId())
-                        .productName(productEntity.getProductName())
-                        .orderQuantity(orderProductDto.getOrderQuantity())
-                        .orderPrice(orderProductDto.getOrderPrice())
-                        .build();
-                
-                orderProductEntityList.add(orderProductEntity);    
-                orderProductId ++;
-            }
-            return orderProductEntityList;
-        }
-    }
 }
