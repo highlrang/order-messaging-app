@@ -8,13 +8,15 @@ spring:
     jpa:
         show-sql: true
         hibernate:
-            ddl-auto: create
+            ddl-auto: none
+            
 
 logging:
     level:
         root: DEBUG
         org:
             hibernate:
-                descriptor:
-                    sql: trace
+                type: TRACE
+                sql: DEBUG
+
     

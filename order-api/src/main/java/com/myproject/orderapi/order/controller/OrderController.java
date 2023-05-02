@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.myproject.core.common.dto.ApiResponse;
 import com.myproject.core.order.dto.OrderCollectionDto;
@@ -23,11 +24,11 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> createOrder(@RequestBody List<OrderProductDto> orderProductDtos){
+    public ResponseEntity<ApiResponse<?>> createOrder(
+            @SessionAttribute("user") UserResponseDto memberDto,
+            @RequestBody List<OrderProductDto> orderProductDtos){
         
-        // TODO security
-        long memberId = 1l;
-        OrderCollectionDto orderCollectionDto = orderService.createOrder(memberId, orderProductDtos);
+        OrderCollectionDto orderCollectionDto = orderService.createOrder(memberDto.getMemberId(), orderProductDtos);
         return ResponseEntity.ok(ApiResponse.success(orderCollectionDto));
     }
 }
