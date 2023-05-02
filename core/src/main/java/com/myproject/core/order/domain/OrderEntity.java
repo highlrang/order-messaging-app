@@ -1,5 +1,9 @@
 package com.myproject.core.order.domain;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -19,17 +23,18 @@ public class OrderEntity extends BaseEntity{
 
     private long memberId;
 
-    private long productId;
-
     @NotNull
-    private String productName;
+    private String orderName;
 
-    private long orderPrice;
-
-    private int orderQuantity;
+    private int orderPrice;
 
     private int orderStatus;
     
+    public void setOrderInfo(String orderName, int orderPrice){
+        this.orderName = orderName;
+        this.orderPrice = orderPrice;
+    }
+
     
     
 }
