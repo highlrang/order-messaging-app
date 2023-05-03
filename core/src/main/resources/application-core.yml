@@ -4,6 +4,20 @@ spring:
         driver-class-name: com.mysql.cj.jdbc.Driver
         username: pfuser
         password: ${dbPassword}
+    
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: none
+            
 
-clientServer:
-    secretKey: ${clientHeaderKey} # with -e
+logging:
+    level:
+        root: DEBUG
+        org:
+            hibernate:
+                type: TRACE
+                sql: DEBUG
+
+header:
+    secretKey: gpejrhdxhddlswmdzl123!@#

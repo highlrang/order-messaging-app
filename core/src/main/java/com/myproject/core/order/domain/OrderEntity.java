@@ -1,9 +1,14 @@
 package com.myproject.core.order.domain;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import com.myproject.core.common.domain.BaseEntity;
+import com.myproject.core.order.enums.OrderStatus;
 
 @Getter
 @Entity
@@ -19,17 +24,25 @@ public class OrderEntity extends BaseEntity{
 
     private long memberId;
 
-    private long productId;
-
     @NotNull
-    private String productName;
+    private String orderName;
 
-    private long orderPrice;
-
-    private int orderQuantity;
+    private int orderPrice;
 
     private int orderStatus;
     
+    public OrderEntity(long memberId){
+        this.memberId = memberId;
+        this.orderName = "";
+        this.orderStatus = OrderStatus.ORDER_PROCESSING.getStatus();
+    }
+
+    public void setOrderInfo(String orderName, int orderPrice){
+        this.orderName = orderName;
+        this.orderPrice = orderPrice;
+        this.orderStatus = OrderStatus.ORDER_COMPLETE.getStatus();
+    }
+
     
     
 }

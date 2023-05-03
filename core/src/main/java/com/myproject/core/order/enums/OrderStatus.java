@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum OrderStatus {
+    ORDER_PROCESSING("ORDER_PROCESSING", 100, "주문중"),
     ORDER_COMPLETE("ORDER_COMPLETE", 110, "주문완료"),
     ORDER_ACCEPT("ORDER_ACCEPT", 120, "주문접수"),
     ORDER_FAIL("ORDER_FAIL", 130, "주문실패"),

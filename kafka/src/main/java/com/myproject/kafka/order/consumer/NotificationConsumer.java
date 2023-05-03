@@ -8,8 +8,8 @@ import org.springframework.kafka.annotation.KafkaListeners;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import com.myproject.core.common.utils.EncryptionUtil;
 import com.myproject.core.order.dto.NotificationDto;
-import com.myproject.core.utils.EncryptionUtil;
 import com.myproject.kafka.client.ExternalClient;
 import com.myproject.kafka.order.constants.OrderTopic;
 import com.myproject.kafka.order.dto.SmsRequestDto;

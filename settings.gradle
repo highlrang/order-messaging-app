@@ -1,5 +1,6 @@
 rootProject.name = 'order-app'
 include 'core'
+include 'auth'
 include 'order-api'
 include 'store-api'
 include 'kafka'

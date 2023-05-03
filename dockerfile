@@ -6,6 +6,7 @@ COPY build.gradle .
 COPY settings.gradle .
 
 COPY core core
+COPY auth auth
 COPY order-api order-api
 COPY store-api store-api
 COPY external-client external-cilent
