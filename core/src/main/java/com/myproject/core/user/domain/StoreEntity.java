@@ -21,10 +21,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "STORE")
 public class StoreEntity extends UserEntity{
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long storeId;
+
+    private long storeNo;
+
+    private String storeName;
 
     @NotNull
     private String storeBranch;

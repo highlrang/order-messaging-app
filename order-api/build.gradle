@@ -19,7 +19,7 @@ configurations {
 }
 
 dependencies {
-	api project(":core")
+	api project(":auth")
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-test'

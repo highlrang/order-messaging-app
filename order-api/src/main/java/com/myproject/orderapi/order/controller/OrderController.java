@@ -25,10 +25,11 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<?>> createOrder(
-            @SessionAttribute("user") UserResponseDto memberDto,
+            // @AuthenticationProvider("user") UserResponseDto memberDto,
             @RequestBody List<OrderProductDto> orderProductDtos){
         
-        OrderCollectionDto orderCollectionDto = orderService.createOrder(memberDto.getMemberId(), orderProductDtos);
+                long memberId = 1l;
+        OrderCollectionDto orderCollectionDto = orderService.createOrder(memberId, orderProductDtos);
         return ResponseEntity.ok(ApiResponse.success(orderCollectionDto));
     }
 }

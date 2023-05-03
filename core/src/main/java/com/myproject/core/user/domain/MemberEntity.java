@@ -16,14 +16,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Table(name = "MEMBER")
 public class MemberEntity extends UserEntity{
-    
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    private long memberId;
     
 }

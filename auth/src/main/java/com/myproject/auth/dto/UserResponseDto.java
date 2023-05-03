@@ -14,7 +14,9 @@ import com.myproject.core.user.domain.UserEntity;
 import com.myproject.core.user.enums.UserRoleType;
 
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @Getter
 public class UserResponseDto implements UserDetails {
 

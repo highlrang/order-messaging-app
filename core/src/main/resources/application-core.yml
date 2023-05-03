@@ -19,4 +19,5 @@ logging:
                 type: TRACE
                 sql: DEBUG
 
-    
+header:
+    secretKey: gpejrhdxhddlswmdzl123!@#

@@ -22,7 +22,7 @@ public class AuthController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<?>> login(@RequestBody LoginDto loginDto){
-        UserResponseDto userDto = authService.login(loginDto);
-        return ResponseEntity.ok(ApiResponse.success(userDto));
+        String userToken = authService.login(loginDto);
+        return ResponseEntity.ok(ApiResponse.success(userToken));
     }
 }

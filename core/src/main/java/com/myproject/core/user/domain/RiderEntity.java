@@ -21,12 +21,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "RIDER")
 public class RiderEntity extends UserEntity{
- 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long riderId;
 
     @NotNull
     private String activityArea;
+
+    private int penalty;
     
 }
