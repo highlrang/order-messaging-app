@@ -42,6 +42,4 @@ public class NotificationConsumer {
         }
     }
 
-// auto.create.topcis.enable
-// --bootstrap-server --topic
 }

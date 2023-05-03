@@ -22,7 +22,9 @@ import com.myproject.core.order.repository.OrderRepository;
 import com.myproject.core.product.domain.ProductEntity;
 import com.myproject.core.product.repository.ProductRepository;
 import com.myproject.core.user.domain.MemberEntity;
+import com.myproject.core.user.domain.StoreEntity;
 import com.myproject.core.user.repository.MemberRepository;
+import com.myproject.core.user.repository.StoreRepository;
 import com.myproject.orderapi.order.producer.NotificationProducer;
 
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
     private final MemberRepository memberRepository;
+    private final StoreRepository storeRepository;
     private final NotificationProducer notificationProducer;
 
     @Transactional
@@ -49,49 +52,60 @@ public class OrderService {
         /* ============================== ORDER_PRODUCT ================================ */
         List<OrderProductEntity> orderProductEntites = createOrderProduct(orderId, orderProductDtos);
         List<OrderProductEntity> savedOrderProductEntities = orderProductRepository.saveAll(orderProductEntites);
+        List<OrderProductDto> orderProductDtoList = savedOrderProductEntities.stream()
+                                            .map(OrderProductDto::new)
+                                            .collect(Collectors.toList());
         
-         /* ================================= ORDER ==================================== */
-        String orderName = orderProductEntites.size() > 1 ?
-                            orderProductEntites.get(0).getProductName() + " 외 " + orderProductEntites.size() + "건" :
-                            orderProductEntites.get(0).getProductName();
-        int orderPrice = orderProductEntites.stream()
-            .mapToInt(ope -> ope.getOrderPrice())
-            .sum();
+        /* ================================= ORDER ==================================== */
+        String orderName = orderProductDtoList.size() > 1 ?
+                            orderProductDtoList.get(0).getProductName() + " 외 " + orderProductEntites.size() + "건" :
+                            orderProductDtoList.get(0).getProductName();
+                            int orderPrice = orderProductEntites.stream()
+                                .mapToInt(ope -> ope.getOrderPrice())
+                                .sum();
         savedOrderEntity.setOrderInfo(orderName, orderPrice);
         OrderDto orderDto = new OrderDto(savedOrderEntity);
         
-        /* ================================ KAFKA MESSAGE ================================ */
-        try{
-            sendMessages(orderDto);
-        }catch (Exception e) {
-            log.error("KAFKA SEND FAILED");
-            log.error(e.toString() + "\n" + Arrays.toString(e.getStackTrace()));
-        }
 
-        return new OrderCollectionDto(
-                                        orderDto,
-                                        savedOrderProductEntities.stream()
-                                            .map(OrderProductDto::new)
-                                            .collect(Collectors.toList())
-                                    );
+        OrderCollectionDto orderCollectionDto = new OrderCollectionDto(orderDto, orderProductDtoList);
+
+        /* ================================ KAFKA MESSAGE ================================ */
+        sendMessages(orderCollectionDto);
+
+        return orderCollectionDto;
         
     }
 
-    private void sendMessages(OrderDto orderDto) throws Exception{
+    private void sendMessages(OrderCollectionDto orderCollectionDto) {
+        try{
+            OrderDto orderDto = orderCollectionDto.getOrderDto();
+            List<OrderProductDto> orderProductDtos = orderCollectionDto.getOrderProductDtos();
 
-        long memberId = orderDto.getMemberId();
-        MemberEntity memberEntity = memberRepository.findById(memberId)
-            .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
+            MemberEntity memberEntity = memberRepository.findById(orderDto.getMemberId())
+                .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
+            List<String> phoneNumbers = new ArrayList<>();
+            phoneNumbers.add(memberEntity.getPhoneNumber());
 
-        OrderStatus orderStatus = OrderStatus.of(orderDto.getOrderStatus());    
-        NotificationDto notificationDto = NotificationDto.builder()
-            .orderStatus(orderStatus)
-            .orderId(orderDto.getOrderId())
-            .orderName(orderDto.getOrderName())
-            .phoneNumber(memberEntity.getPhoneNumber())
-            .build();
+            OrderStatus orderStatus = OrderStatus.of(orderDto.getOrderStatus());  
 
-        notificationProducer.send(notificationDto);
+            List<Long> productIds = orderProductDtos.stream().map(OrderProductDto::getProductId).collect(Collectors.toList());
+            List<StoreEntity> storeEntities = storeRepository.findAllByProductIds(productIds);
+            phoneNumbers.addAll(storeEntities.stream().map(s -> s.getPhoneNumber()).distinct().collect(Collectors.toList()));
+
+            
+            NotificationDto notificationDto = NotificationDto.builder()
+                .orderStatus(orderStatus)
+                .orderId(orderDto.getOrderId())
+                .orderName(orderDto.getOrderName())
+                .phoneNumbers(phoneNumbers)
+                .build();
+
+            notificationProducer.send(notificationDto);
+
+        }catch(Exception e){
+            log.error(e.toString() + "\n" + Arrays.asList(e.getStackTrace()));
+            
+        }
     }
 
 

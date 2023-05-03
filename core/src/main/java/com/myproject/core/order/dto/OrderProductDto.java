@@ -11,11 +11,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderProductDto {
     private long productId;
+    private String productName;
     private int orderPrice;
     private int orderQuantity;
 
     public OrderProductDto(OrderProductEntity e){
         this.productId = e.getProductId();
+        this.productName = e.getProductName();
         this.orderPrice = e.getOrderPrice();
         this.orderQuantity = e.getOrderQuantity();
     }
