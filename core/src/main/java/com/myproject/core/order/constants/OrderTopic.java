@@ -1,4 +1,4 @@
-package com.myproject.kafka.order.constants;
+package com.myproject.core.order.constants;
 
 import lombok.Getter;
 

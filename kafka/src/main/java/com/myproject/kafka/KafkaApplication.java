@@ -10,7 +10,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 
 @EnableKafka
 @EnableFeignClients
-@SpringBootApplication
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 public class KafkaApplication {
 
 	public static void main(String[] args) {
