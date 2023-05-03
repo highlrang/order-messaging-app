@@ -3,6 +3,7 @@ package com.myproject.orderapi.order.producer;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.myproject.core.order.dto.NotificationDto;
@@ -17,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class NotificationProducer {
 
-    // private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private String getTopicName(String code){
         String topicName = null;
@@ -42,8 +43,8 @@ public class NotificationProducer {
 
         OrderStatus orderStatus = notificationDto.getOrderStatus();
         String topicName = getTopicName(orderStatus.getCode());
-        // if(topicName != null)
-            // kafkaTemplate.send(topicName, notificationDto); // object vs json string 
+        if(topicName != null)
+            kafkaTemplate.send(topicName, notificationDto);
     }
 
     

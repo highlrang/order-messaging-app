@@ -1,5 +1,10 @@
 package com.myproject.core.order.enums;
 
+import java.util.Arrays;
+
+import com.myproject.core.common.enums.ErrorCode;
+import com.myproject.core.common.exception.CustomException;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -19,4 +24,16 @@ public enum OrderStatus {
     private final String code;
     private final int status;
     private final String displayName;
+
+    public static OrderStatus of(int status) throws Exception {
+        return Arrays.asList(OrderStatus.values())
+            .stream()
+            .filter(os -> os.getStatus() == status)
+            .findAny()
+            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ORDER_STATUS));
+            
+            
+            
+            
+    }
 }
