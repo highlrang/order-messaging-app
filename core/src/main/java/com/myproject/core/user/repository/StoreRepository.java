@@ -10,8 +10,8 @@ import com.myproject.core.user.domain.StoreEntity;
 public interface StoreRepository extends JpaRepository<StoreEntity, Long>{
     
     @Query(
-        "SELECT s FROM StoreEntity s WHERE s.storeId in " 
-        + "(SELECT p.storeId FROM ProductEntity p WHERE p.productId in (:productIds))"
+        "SELECT s FROM StoreEntity s WHERE s.storeNo in " 
+        + "(SELECT p.storeNo FROM ProductEntity p WHERE p.productId in (:productIds))"
         )
     List<StoreEntity> findAllByProductIds(List<Long> productIds);
 }

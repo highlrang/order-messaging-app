@@ -26,7 +26,7 @@ public class ProductEntity extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long productId;
     
-    private long storeId;
+    private long storeNo;
 
     private long categoryId;
 
