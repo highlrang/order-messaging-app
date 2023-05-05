@@ -2,6 +2,7 @@ package com.myproject.kafka.order.dto;
 
 import lombok.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -36,16 +37,18 @@ public class SmsRequestDto {
 
     public static SmsRequestDto makeMsg(String from, NotificationDto notificationDto){
         SmsRequestDto dto = new SmsRequestDto(from);
-        dto.messages = Arrays.asList(createMessageDto(notificationDto));
+        dto.messages = createMessageDto(notificationDto);
         return dto;
     }
 
-    private static MessageDto createMessageDto(NotificationDto notificationDto){
+    private static List<MessageDto> createMessageDto(NotificationDto notificationDto){
         String content = String.format("주문정보 %d번 %s %s되었습니다.", 
-                            notificationDto.getObjectId(), 
+                            notificationDto.getOrderId(), 
                             notificationDto.getOrderName(),
                             notificationDto.getOrderStatus().getDisplayName());
-
-        return new MessageDto(notificationDto.getPhoneNumber(), content);
+        return notificationDto.getPhoneNumbers().stream()
+            .map(phoneNumber -> new MessageDto(phoneNumber, content))
+            .collect(Collectors.toList());
+        
     }
 }

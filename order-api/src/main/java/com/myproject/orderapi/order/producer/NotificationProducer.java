@@ -1,4 +1,4 @@
-package com.myproject.kafka.order.producer;
+package com.myproject.orderapi.order.producer;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.myproject.core.order.dto.NotificationDto;
 import com.myproject.core.order.enums.OrderStatus;
-import com.myproject.kafka.order.constants.OrderTopic;
+import com.myproject.core.order.constants.OrderTopic;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class NotificationProducer {
             topicName = field.get(null).toString();
 
         }catch (Exception e){
-            log.error("TOPIC NAME GEN ERR {} \n{}", e.toString(), Arrays.toString(e.getStackTrace()));
+            log.error("TOPIC NAME CREATE ERR {} \n{}", e.toString(), Arrays.toString(e.getStackTrace()));
             
         }
         
@@ -44,7 +44,7 @@ public class NotificationProducer {
         OrderStatus orderStatus = notificationDto.getOrderStatus();
         String topicName = getTopicName(orderStatus.getCode());
         if(topicName != null)
-            kafkaTemplate.send(topicName, notificationDto); // object vs json string 
+            kafkaTemplate.send(topicName, notificationDto);
     }
 
     

@@ -1,7 +1,11 @@
 package com.myproject.core.order.dto;
 
+import java.util.List;
+
 import com.myproject.core.order.enums.OrderStatus;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -9,11 +13,14 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class NotificationDto {
 
     private OrderStatus orderStatus;
-    private long objectId;
+    private long orderId;
+    private long deliveryId;
     private String orderName;
-    private String phoneNumber;
+    private List<String> phoneNumbers;
 
 }

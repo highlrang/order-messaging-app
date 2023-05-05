@@ -111,8 +111,8 @@ public class OrderServiceTest {
             .thenReturn(orderProductEntites);
 
         /* ========================= WHEN ============================ */
-        OrderProductDto orderProductOneDto = new OrderProductDto(productOneId, orderOnePrice, productOneQuantity);
-        OrderProductDto orderProductTwoDto = new OrderProductDto(productTwoId, orderTwoPrice, productTwoQuantity);
+        OrderProductDto orderProductOneDto = new OrderProductDto(productOneId, productOneName, orderOnePrice, productOneQuantity);
+        OrderProductDto orderProductTwoDto = new OrderProductDto(productTwoId, productTwoName, orderTwoPrice, productTwoQuantity);
         List<OrderProductDto> orderProductDtos = Arrays.asList(orderProductOneDto, orderProductTwoDto);
 
         OrderCollectionDto orderCollectionDto = orderService.createOrder(memberId, orderProductDtos);
