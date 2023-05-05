@@ -1,5 +1,7 @@
 package com.myproject.core.user.domain;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,5 +33,6 @@ public abstract class UserEntity extends BaseEntity{
     @NotNull
     private String password;
 
+    @Enumerated(EnumType.STRING)
     private UserRoleType userRole;
 }

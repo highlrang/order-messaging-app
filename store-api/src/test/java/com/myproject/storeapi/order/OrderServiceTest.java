@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -19,11 +20,13 @@ import com.myproject.core.order.domain.OrderEntity;
 import com.myproject.core.order.dto.OrderDto;
 import com.myproject.core.order.enums.OrderStatus;
 import com.myproject.core.order.repository.OrderRepository;
+import com.myproject.storeapi.order.service.OrderService;
 
 @ExtendWith(SpringExtension.class)
 public class OrderServiceTest {
 
     @Mock OrderRepository orderRepository;
+    @InjectMocks OrderService orderService;
 
     @Test
     @DisplayName("주문 승인 기능 생성")
@@ -40,7 +43,6 @@ public class OrderServiceTest {
             .thenReturn(Optional.ofNullable(givenEntity));
         
         /* ============================ when ================================= */
-        OrderService orderService = new OrderService();
         OrderDto updatedOrderStatus = orderService.acceptOrder(userId, orderId);
 
         /* ============================ then ================================= */
@@ -49,19 +51,21 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("주문 거절 기능 생성")
-    public void rejectOrder(long orderId){
-    
-    }
+    public void rejectOrder(){
+        
+        /* ============================ given ================================= */
+        long userId = 1l;
+        long orderId = 1l;
+        OrderStatus beforeStatus = OrderStatus.ORDER_COMPLETE;
+        OrderStatus afterStatus = OrderStatus.ORDER_REJECT;
+        OrderEntity givenOrderEntity = OrderEntity.builder().orderStatus(beforeStatus.getStatus()).build();
+        when(orderRepository.findById(anyLong()))
+            .thenReturn(Optional.ofNullable(givenOrderEntity));
 
-    class OrderService {
-
-        public OrderDto acceptOrder(long userId, long orderId){
-            OrderEntity orderEntity = orderRepository.findById(orderId)
-                .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
-
-            orderEntity.changeOrderStatus(OrderStatus.ORDER_ACCEPT, String.valueOf(userId));
-            
-            return new OrderDto(orderEntity);
-        }
+        /* ============================ when ================================= */
+        OrderDto updatedOrderStatus = orderService.rejectOrder(userId, orderId);
+        
+        /* ============================ then ================================= */
+        assertEquals(afterStatus.getStatus(), updatedOrderStatus.getOrderStatus());
     }
 }

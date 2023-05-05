@@ -33,6 +33,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         UserResponseDto userDto = HeaderUtil.getAuth(request);
         
         if(userDto != null){
+            log.info("userDto is {}", userDto.toString());
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDto, userDto.getPassword());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
