@@ -11,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import lombok.Getter;
 import lombok.Setter;
 
+@Setter
 @Getter
 @MappedSuperclass
 public abstract class BaseEntity {

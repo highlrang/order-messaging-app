@@ -43,6 +43,9 @@ public class OrderEntity extends BaseEntity{
         this.orderStatus = OrderStatus.ORDER_COMPLETE.getStatus();
     }
 
-    
+    public void changeOrderStatus(OrderStatus orderStatus, String updateOperator){
+        this.orderStatus = orderStatus.getStatus();
+        this.setUpdateOperator(updateOperator);
+    }
     
 }

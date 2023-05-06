@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myproject.auth.dto.LoginDto;
 import com.myproject.auth.dto.UserResponseDto;
 import com.myproject.core.common.enums.ErrorCode;
@@ -30,10 +31,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AuthService implements UserDetailsService{
 
+    private final ObjectMapper objectMapper;
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @Value("header.secretKey")
+    @Value("${header.secretKey}")
     private String secretKey;
 
     @Override
@@ -50,7 +52,7 @@ public class AuthService implements UserDetailsService{
 
     private String encrypted(UserDetails userDetails) throws Exception{
         UserResponseDto userDto = (UserResponseDto) userDetails;
-        return EncryptionUtil.encrypt(secretKey, userDto.toString());
+        return EncryptionUtil.encrypt(secretKey, objectMapper.writeValueAsString(userDto));
     }
 
     public String login(LoginDto loginDto) {

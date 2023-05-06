@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myproject.core.common.enums.ErrorCode;
@@ -26,18 +27,22 @@ public class HeaderUtil {
     @Value("${header.secretKey}")
     public void setSecretKey(String secretKey){
         HeaderUtil.secretKey = secretKey;
+        System.out.println("secretKey = " + secretKey);
     }
     private static final String AUTHENTICATION_HEADER = "Authorization";
     
     public static UserResponseDto getAuth(HttpServletRequest request) {
         
         String authHeader = request.getHeader(AUTHENTICATION_HEADER);
+        log.info("\nrequest header is {}", authHeader);
         UserResponseDto userDto = null;
 
         if(authHeader != null){
             try {
                 String userStr = EncryptionUtil.decrypt(secretKey, authHeader);
+                System.out.println("userStr = " + userStr);
                 ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 userDto = objectMapper.readValue(userStr, UserResponseDto.class);
 
             } catch (Exception e) {

@@ -9,10 +9,12 @@ import com.myproject.core.user.domain.UserEntity;
 import com.myproject.core.user.enums.UserRoleType;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
 @Getter
+@NoArgsConstructor
 public class UserResponseDto {
 
     private long userId;
