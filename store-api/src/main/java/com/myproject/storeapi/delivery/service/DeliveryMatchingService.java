@@ -1,4 +1,4 @@
-package com.myproject.storeapi.delivery;
+package com.myproject.storeapi.delivery.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +15,6 @@ public class DeliveryMatchingService {
     
     private final DeliveryRepository deliveryRepository;
     private final RiderRepository riderRepository;
-    private final DeliveryHistoryRepository deliveryHistoryRepository;
 
     @Transactional
     public void match(long orderId){
