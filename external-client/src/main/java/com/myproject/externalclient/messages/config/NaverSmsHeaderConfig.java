@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
-public class HeaderConfiguration {
+public class NaverSmsHeaderConfig {
     
     @Value("${naverSms.domain}")
     private String naverSmsDomain;

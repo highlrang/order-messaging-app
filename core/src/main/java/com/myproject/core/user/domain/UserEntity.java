@@ -12,9 +12,11 @@ import com.myproject.core.common.domain.BaseEntity;
 import com.myproject.core.user.enums.UserRoleType;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @MappedSuperclass
-@Getter
+@Getter @Setter
 public abstract class UserEntity extends BaseEntity{
     
     @Id

@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.myproject.externalclient.messages.config.HeaderConfiguration;
+import com.myproject.externalclient.messages.config.NaverSmsHeaderConfig;
 import com.myproject.externalclient.messages.dto.SmsRequestDto;
 import com.myproject.externalclient.messages.dto.SmsResponseDto;
 
 import feign.Headers;
 import feign.Param;
 
-@FeignClient(name = "naverSms", url = "${naverSms.domain}" + "${naverSms.path}", configuration = HeaderConfiguration.class)
+@FeignClient(name = "naverSms", url = "${naverSms.domain}" + "${naverSms.path}", configuration = NaverSmsHeaderConfig.class)
 public interface NaverSmsClient {
     
     @PostMapping("/messages")
