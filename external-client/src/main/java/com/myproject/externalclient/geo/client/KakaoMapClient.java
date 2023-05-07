@@ -5,10 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.myproject.externalclient.geo.config.KakaoHeaderConfig;
 import com.myproject.externalclient.geo.dto.DistanceResponseDto;
 import com.myproject.externalclient.geo.dto.LocationResponseDto;
 
-@FeignClient(name = "kakao-map", url = "${kakao.maps.domain}")
+@FeignClient(name = "kakao-map", url = "${kakao.maps.domain}", configuration = KakaoHeaderConfig.class)
 public interface KakaoMapClient {
     
     @GetMapping("/v2/local/search/address")

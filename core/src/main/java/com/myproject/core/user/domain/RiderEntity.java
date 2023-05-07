@@ -44,7 +44,7 @@ public class RiderEntity extends UserEntity{
     private int penalty;
     
 
-    public void setActivityYn(YesNo activityYn){
-        this.activityYn = activityYn;
+    public void setDeliveringYn(YesNo deliveringYn){
+        this.deliveringYn = deliveringYn;
     }
 }

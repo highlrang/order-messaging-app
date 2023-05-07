@@ -17,7 +17,7 @@ public class LocationResponseDto {
     @Getter
     @NoArgsConstructor
     @ToString
-    class Meta {
+    public static class Meta {
         private int total_count;
         private int pageable_count;
         private boolean is_end;
@@ -26,7 +26,7 @@ public class LocationResponseDto {
     @Getter
     @NoArgsConstructor
     @ToString
-    public class Document {
+    public static class Document {
         private String address_name;
         private String x;
         private String y;
@@ -38,7 +38,7 @@ public class LocationResponseDto {
     @Getter
     @NoArgsConstructor
     @ToString
-    class Address {
+    public static class Address {
         private String address_name;
         private String region_1depth_name;
         private String region_2depth_name;
@@ -57,7 +57,7 @@ public class LocationResponseDto {
     @Getter
     @NoArgsConstructor
     @ToString
-    class RoadAddress {
+    public static class RoadAddress {
         private String address_name;
         private String region_1depth_name;
         private String region_2depth_name;

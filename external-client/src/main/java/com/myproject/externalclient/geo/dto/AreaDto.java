@@ -3,9 +3,9 @@ package com.myproject.externalclient.geo.dto;
 import lombok.Getter;
 
 @Getter
-public class RiderAreaDto {
+public class AreaDto {
     
-    private long riderId;
+    private long key;
     private String address;
     private String x;
     private String y;

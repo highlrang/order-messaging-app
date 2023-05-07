@@ -17,7 +17,7 @@ public class DistanceResponseDto {
     @Getter
     @NoArgsConstructor
     @ToString
-    public class Route {
+    public static class Route {
         private int result_code;
         private String result_msg;
         private String key;
@@ -27,7 +27,7 @@ public class DistanceResponseDto {
     @Getter
     @NoArgsConstructor
     @ToString
-    public class Summary {
+    public static class Summary {
         private int distance;
         private int duration;
     }

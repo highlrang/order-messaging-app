@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.myproject.externalclient.geo.client.KakaoMapClient;
 import com.myproject.externalclient.geo.client.KakaoMobilityClient;
+import com.myproject.externalclient.geo.dto.AreaDto;
+import com.myproject.externalclient.geo.dto.DistanceRequestDto;
 import com.myproject.externalclient.geo.dto.DistanceResponseDto;
-import com.myproject.externalclient.geo.dto.RiderAreaDto;
 import com.myproject.externalclient.geo.service.GeoService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,15 +25,15 @@ public class GeoController {
     private final GeoService geoService;
 
     @PostMapping("/location")
-    public ResponseEntity<?> getLocation(@RequestBody List<RiderAreaDto> riderAreaDtos){
+    public ResponseEntity<?> getLocation(@RequestBody List<AreaDto> areaDtos){
 
-        return ResponseEntity.ok(geoService.getLocation(riderAreaDtos));
+        return ResponseEntity.ok(geoService.getLocation(areaDtos));
     } 
 
     @PostMapping("/distance")
-    public ResponseEntity<?> getDistance(@RequestBody List<RiderAreaDto> riderAreaDtos) {
+    public ResponseEntity<?> getDistance(@RequestBody DistanceRequestDto distanceRequestDto) {
 
-        DistanceResponseDto distanceResponseDto = geoService.getDistance(riderAreaDtos);
+        DistanceResponseDto distanceResponseDto = geoService.getDistance(distanceRequestDto);
         if(distanceResponseDto == null)
             return ResponseEntity.internalServerError().build();
 

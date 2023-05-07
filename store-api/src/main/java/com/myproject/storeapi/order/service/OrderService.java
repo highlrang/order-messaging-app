@@ -16,6 +16,7 @@ import com.myproject.core.order.repository.OrderRepository;
 import com.myproject.core.user.domain.MemberEntity;
 import com.myproject.core.user.repository.MemberRepository;
 import com.myproject.storeapi.delivery.service.DeliveryMatchingService;
+import com.myproject.storeapi.delivery.service.DeliveryService;
 import com.myproject.storeapi.order.producer.NotificationProducer;
 
 import lombok.RequiredArgsConstructor;
@@ -29,19 +30,22 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final NotificationProducer notificationProducer;
-    private final DeliveryMatchingService deliveryMatchingService;
+    private final DeliveryService deliveryService;
     
     @Transactional
     public OrderDto acceptOrder(long userId, long orderId){
         OrderEntity orderEntity = orderRepository.findById(orderId)
             .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
 
+        if(orderEntity.getOrderStatus() != OrderStatus.ORDER_COMPLETE.getStatus())
+            throw new CustomException(ErrorCode.INVALID_ORDER_STATUS);
+        
         orderEntity.changeOrderStatus(OrderStatus.ORDER_ACCEPT, String.valueOf(userId));
         OrderDto orderDto = new OrderDto(orderEntity);
 
         try{
             sendMessage(orderDto);
-            deliveryMatchingService.match(orderDto.getOrderId());
+            deliveryService.match(orderDto.getOrderId());
 
         }catch(Exception e){
             log.error("[KAFKA SEND FAILED]");
@@ -56,6 +60,9 @@ public class OrderService {
         OrderEntity orderEntity = orderRepository.findById(orderId)
             .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
         
+        if(orderEntity.getOrderStatus() != OrderStatus.ORDER_COMPLETE.getStatus())
+            throw new CustomException(ErrorCode.INVALID_ORDER_STATUS);
+            
         orderEntity.changeOrderStatus(OrderStatus.ORDER_REJECT, String.valueOf(userId));
         OrderDto orderDto = new OrderDto(orderEntity);
 

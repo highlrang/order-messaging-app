@@ -13,6 +13,7 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import feign.Request.HttpMethod;
 import feign.RequestInterceptor;
@@ -20,6 +21,7 @@ import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Order(1)
 @Configuration
 public class NaverSmsHeaderConfig {
     
@@ -33,7 +35,7 @@ public class NaverSmsHeaderConfig {
     private String naverSmsSecret;
 
     // 공통 헤더이기 때문에 @Headers나 @RequestHeader로 설정하는 대신 RequestInterceptor 사용
-    @Bean
+    @Bean(name = "naverSmsInterceptor")
     public RequestInterceptor requestInterceptor() {
         return template -> {
             Long timeStamp = System.currentTimeMillis();

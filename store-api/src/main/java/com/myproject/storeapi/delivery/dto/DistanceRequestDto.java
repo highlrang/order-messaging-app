@@ -1,4 +1,4 @@
-package com.myproject.externalclient.geo.dto;
+package com.myproject.storeapi.delivery.dto;
 
 import java.util.List;
 
@@ -22,19 +22,36 @@ public class DistanceRequestDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    static class Origin{
+    public static class Origin{
         private double x;
         private double y;
         private String key;
+
+        public static Origin create(String x, String y, String key){
+            return new Origin(Double.valueOf(x), Double.valueOf(y), key);
+        }
     }
 
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    static class Destination{
+    public static class Destination{
         private double x;
         private double y;
         private String name;
+
+        public static Destination create(String x, String y, String name){
+            return new Destination(Double.valueOf(x), Double.valueOf(y), name);
+        }
+    }
+
+    public static DistanceRequestDto create(Destination destination, List<Origin> origins){
+        return DistanceRequestDto.builder()
+            .destination(destination)
+            .origins(origins)
+            .radius(10000)
+            .priority("TIME")
+            .build();
     }
 }

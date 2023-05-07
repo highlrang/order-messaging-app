@@ -10,7 +10,7 @@ import com.myproject.externalclient.geo.client.KakaoMobilityClient;
 import com.myproject.externalclient.geo.dto.DistanceRequestDto;
 import com.myproject.externalclient.geo.dto.DistanceResponseDto;
 import com.myproject.externalclient.geo.dto.LocationResponseDto;
-import com.myproject.externalclient.geo.dto.RiderAreaDto;
+import com.myproject.externalclient.geo.dto.AreaDto;
 import com.myproject.externalclient.geo.dto.LocationResponseDto.Document;
 
 import lombok.RequiredArgsConstructor;
@@ -24,18 +24,18 @@ public class GeoService {
     private final KakaoMapClient kakaoMapClient;
     private final KakaoMobilityClient kakaoMobilityClient;
 
-    public List<RiderAreaDto> getLocation(List<RiderAreaDto> riderAreaDtos){
+    public List<AreaDto> getLocation(List<AreaDto> areaDtos){
         
-        for (RiderAreaDto riderAreaDto : riderAreaDtos) {
+        for (AreaDto areaDto : areaDtos) {
             
-            ResponseEntity<LocationResponseDto> result = kakaoMapClient.getLocation(riderAreaDto.getAddress());
+            ResponseEntity<LocationResponseDto> result = kakaoMapClient.getLocation(areaDto.getAddress());
             
             if(result.getStatusCode().is2xxSuccessful() && result.getBody() != null){
                 LocationResponseDto locationResponseDto = result.getBody();
 
                 if(!locationResponseDto.getDocuments().isEmpty()){
                     LocationResponseDto.Document document = locationResponseDto.getDocuments().get(0);    
-                    riderAreaDto.setLocation(document.getX(), document.getY());
+                    areaDto.setLocation(document.getX(), document.getY());
                 }else{
                     log.error("[ExternalClient] Feign Response Data Null Error \n {}", locationResponseDto.toString());
                 }
@@ -45,12 +45,11 @@ public class GeoService {
             }
         }
         
-        return riderAreaDtos;
+        return areaDtos;
     }
 
-    public DistanceResponseDto getDistance(List<RiderAreaDto> riderAreaDtos){
+    public DistanceResponseDto getDistance(DistanceRequestDto distanceRequestDto){
 
-        DistanceRequestDto distanceRequestDto = DistanceRequestDto.builder().build();
         ResponseEntity<DistanceResponseDto> result = kakaoMobilityClient.getDistance(distanceRequestDto);
         if(!result.getStatusCode().is2xxSuccessful()){
             log.error("[ExternalClient] Feign Response Error \n {}", result.toString());
