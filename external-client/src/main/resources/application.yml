@@ -10,6 +10,18 @@ naverSms:
     secretKey: ${naverSmsKey}
     from: ${naverSmsFrom}
 
+kakao:
+  restApiKey: "e648ea1c49671399f97f4e059c975f70"
+
+  maps:
+    domain: "https://dapi.kakao.com"
+
+  mobility:
+    domain: "https://apis-navi.kakaomobility.com"
+    
+
+
+
 logging:
   level: 
     root: DEBUG

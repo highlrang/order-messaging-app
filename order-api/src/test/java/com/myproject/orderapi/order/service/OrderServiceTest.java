@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.myproject.core.common.enums.ErrorCode;
 import com.myproject.core.common.exception.CustomException;
+import com.myproject.core.delivery.domain.DeliveryEntity;
+import com.myproject.core.delivery.repository.DeliveryRepository;
 import com.myproject.core.order.domain.OrderEntity;
 import com.myproject.core.order.domain.OrderProductEntity;
 import com.myproject.core.order.dto.OrderCollectionDto;
@@ -32,6 +36,8 @@ import com.myproject.core.order.repository.OrderProductRepository;
 import com.myproject.core.order.repository.OrderRepository;
 import com.myproject.core.product.domain.ProductEntity;
 import com.myproject.core.product.repository.ProductRepository;
+import com.myproject.core.user.domain.MemberEntity;
+import com.myproject.core.user.repository.MemberRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,6 +48,8 @@ public class OrderServiceTest {
     @Mock ProductRepository productRepository;
     @Mock OrderRepository orderRepository;
     @Mock OrderProductRepository orderProductRepository;
+    @Mock MemberRepository memberRepository;
+    @Mock DeliveryRepository deliveryRepository;
     @InjectMocks OrderService orderService;
     
     @Test
@@ -51,6 +59,8 @@ public class OrderServiceTest {
         /* ======================== GIVEN ======================== */
         long orderId = 1l;
         long memberId = 1l;
+        MemberEntity givenMemberEntity = new MemberEntity();
+        givenMemberEntity.setUserId(memberId);
         
         long productOneId = 1l;
         long productTwoId = 2l;
@@ -101,6 +111,8 @@ public class OrderServiceTest {
             .build();
         List<OrderProductEntity> orderProductEntites = Arrays.asList(givenOrderProduct1, givenOrderProduct2);
 
+        when(memberRepository.findById(anyLong()))
+            .thenReturn(Optional.ofNullable(givenMemberEntity));
         when(orderRepository.save(any(OrderEntity.class)))
             .thenReturn(givenOrderEntity);
         when(productRepository.findById(productOneId))
@@ -109,6 +121,9 @@ public class OrderServiceTest {
             .thenReturn(Optional.ofNullable(productTwoEntity));
         when(orderProductRepository.saveAll(any()))
             .thenReturn(orderProductEntites);
+        when(deliveryRepository.save(any(DeliveryEntity.class)))
+            .thenReturn(null);
+            
 
         /* ========================= WHEN ============================ */
         OrderProductDto orderProductOneDto = new OrderProductDto(productOneId, productOneName, orderOnePrice, productOneQuantity);

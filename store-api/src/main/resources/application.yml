@@ -4,3 +4,21 @@ server:
 spring:
     profiles:
         active: core
+
+    kafka:
+        consumer:
+            bootstrap-servers: localhost:9092
+            group-id: notification
+            enable-auto-commit: true
+            auto-offset-reset: latest
+            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer: com.myproject.storeapi.common.serializers.CustomDeserializer
+            
+        
+        producer:
+            bootstrap-servers: localhost:9092
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: com.myproject.storeapi.common.serializers.CustomSerializer
+
+externalClient:
+    uri: "http://127.0.0.1:8087/api/v1"

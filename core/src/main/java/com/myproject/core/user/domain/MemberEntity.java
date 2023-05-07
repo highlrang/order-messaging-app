@@ -18,6 +18,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Table(name = "MEMBER")
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberEntity extends UserEntity{
     
+    private String address;
+    private String detailAddress;
 }

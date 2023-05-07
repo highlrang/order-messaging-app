@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.myproject.core.common.enums.ErrorCode;
 import com.myproject.core.common.exception.CustomException;
+import com.myproject.core.delivery.domain.DeliveryEntity;
+import com.myproject.core.delivery.repository.DeliveryRepository;
 import com.myproject.core.order.domain.OrderEntity;
 import com.myproject.core.order.domain.OrderProductEntity;
 import com.myproject.core.order.dto.NotificationDto;
@@ -38,12 +40,16 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
+    private final DeliveryRepository deliveryRepository;
     private final MemberRepository memberRepository;
     private final StoreRepository storeRepository;
     private final NotificationProducer notificationProducer;
 
     @Transactional
     public OrderCollectionDto createOrder(long userId, List<OrderProductDto> orderProductDtos){
+
+        MemberEntity memberEntity = memberRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
 
         /* ================================= ORDER ==================================== */
         OrderEntity savedOrderEntity = orderRepository.save(new OrderEntity(userId));
@@ -66,6 +72,12 @@ public class OrderService {
         savedOrderEntity.setOrderInfo(orderName, orderPrice);
         OrderDto orderDto = new OrderDto(savedOrderEntity);
         
+        /* ================================= DELIVERY ================================ */
+        deliveryRepository.save(DeliveryEntity.builder()
+            .orderId(orderDto.getOrderId())
+            .address(memberEntity.getAddress())
+            .detailAddress(memberEntity.getDetailAddress())
+            .build());
 
         OrderCollectionDto orderCollectionDto = new OrderCollectionDto(orderDto, orderProductDtoList);
 
