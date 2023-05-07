@@ -1,12 +1,12 @@
 FROM order-app
 
-WORKDIR /order-app/kafka
+WORKDIR /order-app/auth
 
 # RUN chmod +x ./gradlew
 # RUN ./gradlew build
 
 ARG JAR_FILE=/build/libs/*.jar
-COPY ${JAR_FILE} kafka.jar
+COPY ${JAR_FILE} auth.jar
 
-ENTRYPOINT [ "java", "-jar", "kafka.jar"]
+ENTRYPOINT [ "java", "-jar", "auth.jar"]
 # -e

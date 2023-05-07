@@ -1,0 +1,12 @@
+FROM order-app
+
+WORKDIR /order-app/store-api
+
+# RUN chmod +x ./gradlew
+# RUN ./gradlew build
+
+ARG JAR_FILE=/build/libs/*.jar
+COPY ${JAR_FILE} store-api.jar
+
+ENTRYPOINT [ "java", "-jar", "store-api.jar"]
+# -e

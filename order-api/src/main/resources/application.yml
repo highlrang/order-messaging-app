@@ -7,7 +7,7 @@ spring:
 
     kafka:
         consumer:
-            bootstrap-servers: localhost:9092
+            bootstrap-servers: kafka-server:9092
             group-id: notification
             enable-auto-commit: true
             auto-offset-reset: latest
@@ -16,6 +16,6 @@ spring:
             
         
         producer:
-            bootstrap-servers: localhost:9092
+            bootstrap-servers: kafka-server:9092
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
             value-serializer: com.myproject.orderapi.common.serializers.CustomSerializer

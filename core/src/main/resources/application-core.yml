@@ -1,14 +1,13 @@
 spring:
     datasource:
-        url: "jdbc:mysql://127.0.0.1:3306/commercedb" # host.docker.internal
+        url: jdbc:mysql://mysql:3306/commercedb?useSSL=false&allowPublicKeyRetrieval=true
         driver-class-name: com.mysql.cj.jdbc.Driver
-        username: pfuser
-        password: ${dbPassword}
+        username: root
+        password: pfuser1234 #${dbPassword}
     
     jpa:
-        show-sql: true
         hibernate:
-            ddl-auto: update
+            ddl-auto: create
             
 
 logging:
