@@ -43,4 +43,5 @@ public class DeliveryEntity extends BaseEntity{
     public void setRider(long riderId){
         this.riderId = riderId;
     }
+
 }

@@ -13,6 +13,10 @@ import com.myproject.core.common.exception.CustomException;
 import com.myproject.core.delivery.domain.DeliveryEntity;
 import com.myproject.core.delivery.dto.DeliveryDto;
 import com.myproject.core.delivery.repository.DeliveryRepository;
+import com.myproject.core.order.domain.OrderEntity;
+import com.myproject.core.order.dto.OrderDto;
+import com.myproject.core.order.enums.OrderStatus;
+import com.myproject.core.order.repository.OrderRepository;
 import com.myproject.core.user.domain.RiderEntity;
 import com.myproject.core.user.repository.RiderRepository;
 
@@ -26,6 +30,7 @@ public class DeliveryService {
     private final DeliveryRepository deliveryRepository;
     private final RiderRepository riderRepository;
     private final DeliveryMatchingService deliveryMatchingService;
+    private final OrderRepository orderRepository;
 
  
     @Transactional
@@ -47,5 +52,23 @@ public class DeliveryService {
         riderEntity.setDeliveringYn(YesNo.Y);
 
         return new DeliveryDto(deliveryEntity);
+    }
+
+    @Transactional
+    public OrderDto startDelivery(long orderId) {
+            
+        OrderEntity orderEntity = orderRepository.findById(orderId)
+            .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
+
+        DeliveryEntity deliveryEntity = deliveryRepository.findByOrderId(orderId)
+            .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
+
+        if(orderEntity.getOrderStatus() != OrderStatus.ORDER_ACCEPT.getStatus())
+            throw new CustomException(ErrorCode.INVALID_ORDER_STATUS);
+
+        orderEntity.changeOrderStatus(OrderStatus.DELIVERY_START, String.valueOf(deliveryEntity.getRiderId()));
+
+        return new OrderDto(orderEntity);
+        
     }
 }

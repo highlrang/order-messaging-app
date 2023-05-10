@@ -54,7 +54,7 @@ import lombok.Getter;
 import scala.compat.java8.functionConverterImpls.RichDoubleConsumerAsFunction1;
 
 @ExtendWith(SpringExtension.class)
-public class DeliveryMatchingTest {
+public class DeliveryMatchingServiceTest {
 
     @Mock RiderRepository riderRepository;
     @Mock DeliveryRepository deliveryRepository;
