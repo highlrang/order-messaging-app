@@ -2,6 +2,7 @@ package com.myproject.storeapi.order.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,7 @@ public class OrderController {
     
     private final OrderService orderService;
 
-    @PostMapping("/{orderId}/accept")
+    @GetMapping("/{orderId}/accept")
     public ResponseEntity<ApiResponse<?>> acceptOrder(
                                                         @AuthenticationPrincipal UserResponseDto userDto,
                                                         @PathVariable("orderId") long orderId
@@ -29,7 +30,7 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.success(orderService.acceptOrder(userDto.getUserId(), orderId)));
     }
 
-    @PostMapping("/{orderId}/reject")
+    @GetMapping("/{orderId}/reject")
     public ResponseEntity<ApiResponse<?>> rejectOrder(
                                                         @AuthenticationPrincipal UserResponseDto userDto,
                                                         @PathVariable("orderId") long orderId
