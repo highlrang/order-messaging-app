@@ -27,6 +27,7 @@ import com.myproject.core.user.domain.MemberEntity;
 import com.myproject.core.user.domain.StoreEntity;
 import com.myproject.core.user.repository.MemberRepository;
 import com.myproject.core.user.repository.StoreRepository;
+import com.myproject.orderapi.common.service.NotificationService;
 import com.myproject.orderapi.order.producer.NotificationProducer;
 
 import lombok.RequiredArgsConstructor;
@@ -42,8 +43,7 @@ public class OrderService {
     private final OrderProductRepository orderProductRepository;
     private final DeliveryRepository deliveryRepository;
     private final MemberRepository memberRepository;
-    private final StoreRepository storeRepository;
-    private final NotificationProducer notificationProducer;
+    private final NotificationService notificationService;
 
     @Transactional
     public OrderCollectionDto createOrder(long userId, List<OrderProductDto> orderProductDtos){
@@ -82,42 +82,10 @@ public class OrderService {
         OrderCollectionDto orderCollectionDto = new OrderCollectionDto(orderDto, orderProductDtoList);
 
         /* ================================ KAFKA MESSAGE ================================ */
-        sendMessages(orderCollectionDto);
+        notificationService.sendMessage(orderCollectionDto);
 
         return orderCollectionDto;
         
-    }
-
-    private void sendMessages(OrderCollectionDto orderCollectionDto) {
-        try{
-            OrderDto orderDto = orderCollectionDto.getOrderDto();
-            List<OrderProductDto> orderProductDtos = orderCollectionDto.getOrderProductDtos();
-
-            MemberEntity memberEntity = memberRepository.findById(orderDto.getMemberId())
-                .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
-            List<String> phoneNumbers = new ArrayList<>();
-            phoneNumbers.add(memberEntity.getPhoneNumber());
-
-            OrderStatus orderStatus = OrderStatus.of(orderDto.getOrderStatus());  
-
-            List<Long> productIds = orderProductDtos.stream().map(OrderProductDto::getProductId).collect(Collectors.toList());
-            List<StoreEntity> storeEntities = storeRepository.findAllByProductIds(productIds);
-            phoneNumbers.addAll(storeEntities.stream().map(s -> s.getPhoneNumber()).distinct().collect(Collectors.toList()));
-
-            
-            NotificationDto notificationDto = NotificationDto.builder()
-                .orderStatus(orderStatus)
-                .orderId(orderDto.getOrderId())
-                .orderName(orderDto.getOrderName())
-                .phoneNumbers(phoneNumbers)
-                .build();
-
-            notificationProducer.send(notificationDto);
-
-        }catch(Exception e){
-            log.error(e.toString() + "\n" + Arrays.asList(e.getStackTrace()));
-            
-        }
     }
 
 

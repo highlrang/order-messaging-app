@@ -15,9 +15,9 @@ import com.myproject.core.order.enums.OrderStatus;
 import com.myproject.core.order.repository.OrderRepository;
 import com.myproject.core.user.domain.MemberEntity;
 import com.myproject.core.user.repository.MemberRepository;
+import com.myproject.storeapi.common.producer.NotificationProducer;
 import com.myproject.storeapi.delivery.service.DeliveryMatchingService;
 import com.myproject.storeapi.delivery.service.DeliveryService;
-import com.myproject.storeapi.order.producer.NotificationProducer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
