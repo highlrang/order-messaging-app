@@ -3,7 +3,9 @@ package com.myproject.storeapi.delivery.service;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,11 +16,17 @@ import com.myproject.core.delivery.domain.DeliveryEntity;
 import com.myproject.core.delivery.dto.DeliveryDto;
 import com.myproject.core.delivery.repository.DeliveryRepository;
 import com.myproject.core.order.domain.OrderEntity;
+import com.myproject.core.order.domain.OrderProductEntity;
+import com.myproject.core.order.dto.NotificationDto;
+import com.myproject.core.order.dto.OrderCollectionDto;
 import com.myproject.core.order.dto.OrderDto;
+import com.myproject.core.order.dto.OrderProductDto;
 import com.myproject.core.order.enums.OrderStatus;
+import com.myproject.core.order.repository.OrderProductRepository;
 import com.myproject.core.order.repository.OrderRepository;
 import com.myproject.core.user.domain.RiderEntity;
 import com.myproject.core.user.repository.RiderRepository;
+import com.myproject.storeapi.common.service.NotificationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +39,8 @@ public class DeliveryService {
     private final RiderRepository riderRepository;
     private final DeliveryMatchingService deliveryMatchingService;
     private final OrderRepository orderRepository;
+    private final OrderProductRepository orderProductRepository;
+    private final NotificationService notificationService;
 
  
     @Transactional
@@ -56,7 +66,8 @@ public class DeliveryService {
 
     @Transactional
     public OrderDto startDelivery(long orderId) {
-            
+        
+        /* ================================ DELIVERY ================================ */
         OrderEntity orderEntity = orderRepository.findById(orderId)
             .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
 
@@ -66,7 +77,15 @@ public class DeliveryService {
         if(orderEntity.getOrderStatus() != OrderStatus.ORDER_ACCEPT.getStatus())
             throw new CustomException(ErrorCode.INVALID_ORDER_STATUS);
 
-        orderEntity.changeOrderStatus(OrderStatus.DELIVERY_START, String.valueOf(deliveryEntity.getRiderId()));
+        orderEntity.changeOrderStatus(OrderStatus.DELIVERY_START, String.valueOf(deliveryEntity.getRiderId())); 
+
+        /* ================================ KAFKA MESSAGE ================================ */
+        List<OrderProductEntity> orderProductEntites = orderProductRepository.findByOrderId(orderId);
+        
+        OrderDto orderDto = new OrderDto(orderEntity);
+        List<OrderProductDto> orderProductDtos = orderProductEntites.stream().map(OrderProductDto::new).collect(Collectors.toList());
+        OrderCollectionDto orderCollectionDto = new OrderCollectionDto(orderDto, orderProductDtos);
+        notificationService.sendMessage(orderCollectionDto);
 
         return new OrderDto(orderEntity);
         
