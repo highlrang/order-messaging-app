@@ -79,15 +79,45 @@ public class DeliveryService {
 
         orderEntity.changeOrderStatus(OrderStatus.DELIVERY_START, String.valueOf(deliveryEntity.getRiderId())); 
 
+        OrderDto orderDto = new OrderDto(orderEntity);
+
         /* ================================ KAFKA MESSAGE ================================ */
-        List<OrderProductEntity> orderProductEntites = orderProductRepository.findByOrderId(orderId);
+        
+        sendMessage(orderDto);
+
+        return orderDto;
+        
+    }
+
+    @Transactional
+    public OrderDto completeDelivery(long orderId){
+
+        /* ================================ DELIVERY ================================ */
+        OrderEntity orderEntity = orderRepository.findById(orderId)
+            .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
+
+        DeliveryEntity deliveryEntity = deliveryRepository.findByOrderId(orderId)
+            .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
+
+        if(orderEntity.getOrderStatus() != OrderStatus.DELIVERY_START.getStatus())
+            throw new CustomException(ErrorCode.INVALID_ORDER_STATUS);
+        orderEntity.changeOrderStatus(OrderStatus.DELIVERY_COMPLETE, String.valueOf(deliveryEntity.getRiderId()));
         
         OrderDto orderDto = new OrderDto(orderEntity);
+
+        /* ================================ KAFKA MESSAGE ================================ */
+
+        sendMessage(orderDto);
+
+        return orderDto;
+
+    }
+
+    private void sendMessage(OrderDto orderDto){
+        List<OrderProductEntity> orderProductEntites = orderProductRepository.findByOrderId(orderDto.getOrderId());
+        
         List<OrderProductDto> orderProductDtos = orderProductEntites.stream().map(OrderProductDto::new).collect(Collectors.toList());
         OrderCollectionDto orderCollectionDto = new OrderCollectionDto(orderDto, orderProductDtos);
         notificationService.sendMessage(orderCollectionDto);
-
-        return new OrderDto(orderEntity);
-        
     }
 }
