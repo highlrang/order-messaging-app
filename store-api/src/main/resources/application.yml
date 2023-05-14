@@ -21,4 +21,4 @@ spring:
             value-serializer: com.myproject.storeapi.common.serializers.CustomSerializer
 
 externalClient:
-    uri: "http://127.0.0.1:8087/api/v1"
+    uri: "http://host.docker.internal:8087/api/v1"

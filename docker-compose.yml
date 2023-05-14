@@ -1,87 +1,22 @@
 version: "2"
 
-networks:
-    order-app-net:
-      external: true
-
 services:
-  mysql: 
-    image: mysql:8.0.33
-    container_name: mysql
-    ports:
-      - "13306:3306"
-    hostname: mysql
-    environment:
-      MYSQL_DATABASE: commercedb
-      MYSQL_ROOT_PASSWORD: pfuser1234 #${dbPassword}
-    volumes:
-      - ./mysql/data:/var/lib/mysql
-    platform: linux/amd64
-    networks:
-      - order-app-net
-  
-  zookeeper-server:
-    image: wurstmeister/zookeeper
-    container_name: zookeeper-server
-    hostname: zookeeper
-    platform: linux/amd64
-    ports:
-     - "2181:2181"
-    networks:
-      - order-app-net
-
-  kafka-server:
-    image: wurstmeister/kafka
-    container_name: kafka-server
-    ports:
-     - "9092:9092"
-    environment:
-      KAFKA_LISTENERS: PLAINTEXT://:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-server:9092
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: order-complete:3:1,order-accept:3:1,order-reject:1:1
-    depends_on:
-      - zookeeper-server
-    networks:
-      - order-app-net
-
   auth:
     image: 'auth'
     container_name: auth
     build: ./auth/
-    environment:
-      - dbPassword=${dbPassword}
-    depends_on:
-      - mysql
-    networks:
-      - order-app-net
-    restart: always
+    ports:
+      - 8081:8081
   
   order-api:
     image: 'order-api'
     container_name: order-api
     build: ./order-api/
-    environment:
-      - dbPassword=${dbPassword}
-    depends_on:
-      - mysql
-      - zookeeper-server
-      - kafka-server
-    networks:
-      - order-app-net
 
   store-api:
     image: 'store-api'
     container_name: store-api
     build: ./store-api/
-    environment:
-      - dbPassword=${dbPassword}
-    depends_on:
-      - mysql
-      - zookeeper-server
-      - kafka-server
-    networks:
-      - order-app-net
 
   kafka:
     image: 'kafka'
@@ -89,11 +24,6 @@ services:
     build: ./kafka/
     environment:
       - naverSmsFrom=${naverSmsFrom}
-    depends_on:
-      - zookeeper-server
-      - kafka-server
-    networks:
-      - order-app-net
 
   external-client:
     image: 'external-client'
@@ -101,5 +31,3 @@ services:
     build: ./external-client/
     environment:
       - naverSmsKey=${naverSmsKey}
-    networks:
-      - order-app-net
