@@ -30,8 +30,6 @@ import com.myproject.core.user.repository.RiderRepository;
 import com.myproject.storeapi.common.service.NotificationService;
 import com.myproject.storeapi.delivery.service.DeliveryMatchingService;
 import com.myproject.storeapi.delivery.service.DeliveryService;
-import com.myproject.storeapi.order.service.OrderService;
-import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
 
 @ExtendWith(SpringExtension.class)
 class DeliveryServiceTest {
