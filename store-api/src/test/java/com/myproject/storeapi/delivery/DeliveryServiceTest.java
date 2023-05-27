@@ -30,7 +30,6 @@ import com.myproject.core.user.repository.RiderRepository;
 import com.myproject.storeapi.common.service.NotificationService;
 import com.myproject.storeapi.delivery.service.DeliveryMatchingService;
 import com.myproject.storeapi.delivery.service.DeliveryService;
-import com.myproject.storeapi.order.service.OrderService;
 
 @ExtendWith(SpringExtension.class)
 class DeliveryServiceTest {
