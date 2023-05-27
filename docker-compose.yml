@@ -1,0 +1,33 @@
+version: "2"
+
+services:
+  auth:
+    image: 'auth'
+    container_name: auth
+    build: ./auth/
+    ports:
+      - 8081:8081
+  
+  order-api:
+    image: 'order-api'
+    container_name: order-api
+    build: ./order-api/
+
+  store-api:
+    image: 'store-api'
+    container_name: store-api
+    build: ./store-api/
+
+  kafka:
+    image: 'kafka'
+    container_name: order-kafka
+    build: ./kafka/
+    environment:
+      - naverSmsFrom=${naverSmsFrom}
+
+  external-client:
+    image: 'external-client'
+    container_name: external-client
+    build: ./external-client/
+    environment:
+      - naverSmsKey=${naverSmsKey}
