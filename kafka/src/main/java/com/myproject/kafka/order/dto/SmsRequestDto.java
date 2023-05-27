@@ -35,6 +35,14 @@ public class SmsRequestDto {
         this.content = "[ORDER-MESSASING]";
     }
 
+    public static SmsRequestDto inputMsg(String from, List<String> to, String msg){
+        SmsRequestDto dto = new SmsRequestDto(from);
+        dto.messages = to.stream()
+                                .map(phoneNumber -> new MessageDto(phoneNumber, msg))
+                                .collect(Collectors.toList());
+        return dto;
+    }
+
     public static SmsRequestDto makeMsg(String from, NotificationDto notificationDto){
         SmsRequestDto dto = new SmsRequestDto(from);
         dto.messages = createMessageDto(notificationDto);

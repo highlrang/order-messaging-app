@@ -10,5 +10,6 @@ public class OrderTopic {
     public static final String ORDER_REJECT = "order-reject";
     public static final String DELIVERY_START = "delivery-start";
     public static final String DELIVERY_COMPLETE = "delivery-complete";
+    public static final String ORDER_REVIEW = "order-review";
 
 }
