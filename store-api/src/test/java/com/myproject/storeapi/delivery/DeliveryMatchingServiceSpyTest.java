@@ -42,7 +42,7 @@ import com.myproject.storeapi.delivery.service.DeliveryService;
 
 import com.myproject.core.user.domain.RiderEntity;
 
-@SpringBootTest(args = {"--dbPassword=pfuser1234"})
+@SpringBootTest
 public class DeliveryMatchingServiceSpyTest {
     
     @MockBean RiderRepository riderRepository;
