@@ -52,6 +52,12 @@ public class NotificationConsumer {
         externalClient.sendMessage(smsRequestDto);
     }
 
+    @KafkaListener(topics = OrderTopic.DELIVERY_COMPLETE, groupId = "${spring.kafka.consumer.group-id}")
+    public void deliveryComplete(NotificationDto notificationDto){
+        SmsRequestDto smsRequestDto = SmsRequestDto.makeMsg(naverSmsFrom, notificationDto);
+        externalClient.sendMessage(smsRequestDto);
+    }
+
     @KafkaListener(topics = OrderTopic.ORDER_REVIEW, groupId = "${spring.kafka.consumer.group-id}")
     public void orderReview(ReviewNotificationDto reviewNotificationDto){
 

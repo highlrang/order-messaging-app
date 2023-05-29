@@ -38,6 +38,7 @@ import com.myproject.core.product.domain.ProductEntity;
 import com.myproject.core.product.repository.ProductRepository;
 import com.myproject.core.user.domain.MemberEntity;
 import com.myproject.core.user.repository.MemberRepository;
+import com.myproject.orderapi.common.service.NotificationService;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,6 +51,7 @@ public class OrderServiceTest {
     @Mock OrderProductRepository orderProductRepository;
     @Mock MemberRepository memberRepository;
     @Mock DeliveryRepository deliveryRepository;
+    @Mock NotificationService notificationService;
     @InjectMocks OrderService orderService;
     
     @Test
@@ -123,6 +125,8 @@ public class OrderServiceTest {
             .thenReturn(orderProductEntites);
         when(deliveryRepository.save(any(DeliveryEntity.class)))
             .thenReturn(null);
+        doNothing().when(notificationService)
+            .sendMessage(any());
             
 
         /* ========================= WHEN ============================ */
