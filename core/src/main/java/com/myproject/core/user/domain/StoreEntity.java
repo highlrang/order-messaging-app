@@ -28,4 +28,6 @@ public class StoreEntity extends UserEntity{
 
     @NotNull
     private String storeBranch;
+
+    private double storeRating;
 }

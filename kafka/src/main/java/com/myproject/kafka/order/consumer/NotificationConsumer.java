@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.myproject.core.common.utils.EncryptionUtil;
 import com.myproject.core.order.dto.NotificationDto;
+import com.myproject.core.order.dto.ReviewNotificationDto;
 import com.myproject.kafka.client.ExternalClient;
 import com.myproject.core.order.constants.OrderTopic;
 import com.myproject.kafka.order.dto.SmsRequestDto;
@@ -40,7 +41,7 @@ public class NotificationConsumer {
     }
 
     @KafkaListener(topics = OrderTopic.ORDER_REJECT, groupId = "${spring.kafka.consumer.group-id}")
-    public void orderReject(NotificationDto notificationDto){
+    public void orderRejectMessage(NotificationDto notificationDto){
         SmsRequestDto smsRequestDto = SmsRequestDto.makeMsg(naverSmsFrom, notificationDto);
         externalClient.sendMessage(smsRequestDto);
     }
@@ -57,5 +58,16 @@ public class NotificationConsumer {
         externalClient.sendMessage(smsRequestDto);
     }
 
+    @KafkaListener(topics = OrderTopic.ORDER_REVIEW, groupId = "${spring.kafka.consumer.group-id}")
+    public void orderReview(ReviewNotificationDto reviewNotificationDto){
+
+        String msg = String.format("주문 정보 %번 %s \n 리뷰가 등록되었습니다.", reviewNotificationDto.getOrderName(), reviewNotificationDto.getOrderId());
+        SmsRequestDto smsRequestDto = SmsRequestDto.inputMsg(
+                                                            naverSmsFrom, 
+                                                            reviewNotificationDto.getPhoneNumbers(),  
+                                                            msg
+                                                            );
+        externalClient.sendMessage(smsRequestDto);
+    }
 
 }
