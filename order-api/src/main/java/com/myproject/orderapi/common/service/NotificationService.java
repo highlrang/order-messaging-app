@@ -9,16 +9,22 @@ import org.springframework.stereotype.Service;
 
 import com.myproject.core.common.enums.ErrorCode;
 import com.myproject.core.common.exception.CustomException;
+import com.myproject.core.order.domain.OrderEntity;
+import com.myproject.core.order.domain.OrderProductEntity;
 import com.myproject.core.order.dto.NotificationDto;
 import com.myproject.core.order.dto.OrderCollectionDto;
 import com.myproject.core.order.dto.OrderDto;
 import com.myproject.core.order.dto.OrderProductDto;
+import com.myproject.core.order.dto.ReviewNotificationDto;
 import com.myproject.core.order.enums.OrderStatus;
+import com.myproject.core.order.repository.OrderProductRepository;
+import com.myproject.core.order.repository.OrderRepository;
 import com.myproject.core.user.domain.MemberEntity;
 import com.myproject.core.user.domain.StoreEntity;
 import com.myproject.core.user.repository.MemberRepository;
 import com.myproject.core.user.repository.StoreRepository;
 import com.myproject.orderapi.order.producer.NotificationProducer;
+import com.myproject.orderapi.review.dto.ReviewResponseDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class NotificationService {
     
+    private final OrderRepository orderRepository;
+    private final OrderProductRepository orderProductRepository;
     private final MemberRepository memberRepository;
     private final StoreRepository storeRepository;
     private final NotificationProducer notificationProducer;
@@ -36,19 +44,9 @@ public class NotificationService {
 
         try{
             OrderDto orderDto = orderCollectionDto.getOrderDto();
-            List<OrderProductDto> orderProductDtos = orderCollectionDto.getOrderProductDtos();
-
-            MemberEntity memberEntity = memberRepository.findById(orderDto.getMemberId())
-                .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
-            List<String> phoneNumbers = new ArrayList<>();
-            phoneNumbers.add(memberEntity.getPhoneNumber());
-
             OrderStatus orderStatus = OrderStatus.of(orderDto.getOrderStatus());  
 
-            List<Long> productIds = orderProductDtos.stream().map(OrderProductDto::getProductId).collect(Collectors.toList());
-            List<StoreEntity> storeEntities = storeRepository.findAllByProductIds(productIds);
-            phoneNumbers.addAll(storeEntities.stream().map(s -> s.getPhoneNumber()).distinct().collect(Collectors.toList()));
-
+            List<String> phoneNumbers = getPhoneNumbers(orderCollectionDto);
             
             NotificationDto notificationDto = NotificationDto.builder()
                 .orderStatus(orderStatus)
@@ -63,5 +61,47 @@ public class NotificationService {
             log.error(e.toString() + "\n" + Arrays.asList(e.getStackTrace()));
             
         }
+    }
+
+    public void sendReviewMessage(ReviewResponseDto reviewDto){
+        long orderId = reviewDto.getOrderId();
+        OrderDto orderDto = new OrderDto(orderRepository.findById(orderId)
+            .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND)));
+        List<OrderProductDto> orderProductDtos = orderProductRepository.findByOrderId(orderId)
+                                                                        .stream()
+                                                                        .map(OrderProductDto::new)
+                                                                        .collect(Collectors.toList());
+
+        OrderCollectionDto orderCollectionDto = new OrderCollectionDto(orderDto, orderProductDtos);
+        
+
+        List<String> phoneNumbers = getPhoneNumbers(orderCollectionDto);
+        
+        StoreEntity storeEntity = storeRepository.findByOrderProductId(reviewDto.getOrderProductId())
+                                            .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
+
+        ReviewNotificationDto reviewNotiDto = new ReviewNotificationDto(
+                                                                        orderId,
+                                                                        orderDto.getOrderName(),
+                                                                        phoneNumbers,
+                                                                        storeEntity.getStoreNo(),
+                                                                        reviewDto.getReviewPoint()
+                                                                        );
+        notificationProducer.send(reviewNotiDto);
+    }
+
+    private List<String> getPhoneNumbers(OrderCollectionDto orderCollectionDto){
+        OrderDto orderDto = orderCollectionDto.getOrderDto();
+        MemberEntity memberEntity = memberRepository.findById(orderDto.getMemberId())
+            .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
+        List<String> phoneNumbers = new ArrayList<>();
+        phoneNumbers.add(memberEntity.getPhoneNumber());
+
+        List<OrderProductDto> orderProductDtos = orderCollectionDto.getOrderProductDtos();
+        List<Long> productIds = orderProductDtos.stream().map(OrderProductDto::getProductId).collect(Collectors.toList());
+        List<StoreEntity> storeEntities = storeRepository.findAllByProductIds(productIds);
+        phoneNumbers.addAll(storeEntities.stream().map(s -> s.getPhoneNumber()).distinct().collect(Collectors.toList()));
+
+        return phoneNumbers;
     }
 }

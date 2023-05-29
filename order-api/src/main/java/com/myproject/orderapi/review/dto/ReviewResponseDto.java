@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class ReviewResponseDto {
     private long orderId;
+    private long orderProductId;
     private double reviewPoint;
     private String reviewContent;
 

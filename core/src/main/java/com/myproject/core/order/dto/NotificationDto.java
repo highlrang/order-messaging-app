@@ -23,4 +23,9 @@ public class NotificationDto {
     private String orderName;
     private List<String> phoneNumbers;
 
+    public NotificationDto(long orderId, String orderName, List<String> phoneNumbers){
+        this.orderId = orderId;
+        this.orderName = orderName;
+        this.phoneNumbers = phoneNumbers;
+    }
 }

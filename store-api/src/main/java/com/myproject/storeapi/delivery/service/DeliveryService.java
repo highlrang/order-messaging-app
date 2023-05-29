@@ -108,17 +108,17 @@ public class DeliveryService {
 
         /* ================================ KAFKA MESSAGE ================================ */
 
-        sendMessage(orderDto);
+        sendOrderMessage(orderDto);
 
         return orderDto;
 
     }
 
-    private void sendMessage(OrderDto orderDto){
+    private void sendOrderMessage(OrderDto orderDto){
         List<OrderProductEntity> orderProductEntites = orderProductRepository.findByOrderId(orderDto.getOrderId());
         
         List<OrderProductDto> orderProductDtos = orderProductEntites.stream().map(OrderProductDto::new).collect(Collectors.toList());
         OrderCollectionDto orderCollectionDto = new OrderCollectionDto(orderDto, orderProductDtos);
-        notificationService.sendMessage(orderCollectionDto);
+        notificationService.sendOrderMessage(orderCollectionDto);
     }
 }

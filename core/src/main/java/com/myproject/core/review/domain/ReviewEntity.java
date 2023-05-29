@@ -26,6 +26,7 @@ public class ReviewEntity extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reviewId;
     private long orderId;
+    private long orderProductId;
     @NotNull
     private String reviewContent;
     private double reviewPoint;
