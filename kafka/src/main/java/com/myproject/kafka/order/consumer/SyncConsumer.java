@@ -20,8 +20,8 @@ public class SyncConsumer {
     @KafkaListener(topics = OrderTopic.ORDER_REVIEW, groupId = "order-review")
     public void orderReview(ReviewNotificationDto dto){ 
 
-        StoreReviewDto storeReviewDto = StoreReviewDto.of(dto.getStoreNo(), dto.getReviewPoint());
-        externalClient.manageReview(storeReviewDto); 
+        StoreReviewDto storeReviewDto = StoreReviewDto.of(dto.getStoreNo(), dto.getReviewRating());
+        externalClient.manageReview(storeReviewDto);
         
     }
 }

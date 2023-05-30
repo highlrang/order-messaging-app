@@ -30,4 +30,8 @@ public class StoreEntity extends UserEntity{
     private String storeBranch;
 
     private double storeRating;
+    
+    public void updateStoreRating(double storeRating) {
+        this.storeRating = storeRating;
+    }
 }

@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.myproject.core.common.enums.ErrorCode;
 import com.myproject.core.common.exception.CustomException;
-import com.myproject.core.order.domain.OrderEntity;
-import com.myproject.core.order.domain.OrderProductEntity;
 import com.myproject.core.order.dto.NotificationDto;
 import com.myproject.core.order.dto.OrderCollectionDto;
 import com.myproject.core.order.dto.OrderDto;
@@ -19,6 +17,8 @@ import com.myproject.core.order.dto.ReviewNotificationDto;
 import com.myproject.core.order.enums.OrderStatus;
 import com.myproject.core.order.repository.OrderProductRepository;
 import com.myproject.core.order.repository.OrderRepository;
+import com.myproject.core.review.domain.ReviewEntity;
+import com.myproject.core.review.repository.ReviewRepository;
 import com.myproject.core.user.domain.MemberEntity;
 import com.myproject.core.user.domain.StoreEntity;
 import com.myproject.core.user.repository.MemberRepository;
@@ -38,6 +38,7 @@ public class NotificationService {
     private final OrderProductRepository orderProductRepository;
     private final MemberRepository memberRepository;
     private final StoreRepository storeRepository;
+    private final ReviewRepository reviewRepository;
     private final NotificationProducer notificationProducer;
 
     public void sendMessage(OrderCollectionDto orderCollectionDto){
@@ -80,12 +81,18 @@ public class NotificationService {
         StoreEntity storeEntity = storeRepository.findByOrderProductId(reviewDto.getOrderProductId())
                                             .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
 
+        List<ReviewEntity> reviewEntities = reviewRepository.findByStoreNo(storeEntity.getStoreNo());
+        double sum = reviewEntities.stream()
+            .map(r -> r.getReviewPoint())
+            .reduce(0d, (prev, next) -> prev + next);
+        int storeRating = (int) sum / reviewEntities.size();
+
         ReviewNotificationDto reviewNotiDto = new ReviewNotificationDto(
                                                                         orderId,
                                                                         orderDto.getOrderName(),
                                                                         phoneNumbers,
                                                                         storeEntity.getStoreNo(),
-                                                                        reviewDto.getReviewPoint()
+                                                                        storeRating
                                                                         );
         notificationProducer.send(reviewNotiDto);
     }

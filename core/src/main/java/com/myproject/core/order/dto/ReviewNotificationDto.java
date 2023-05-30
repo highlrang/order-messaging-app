@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 public class ReviewNotificationDto extends NotificationDto{
     
     private long storeNo;
-    private double reviewPoint;
+    private double reviewRating;
 
-    public ReviewNotificationDto(long orderId, String orderName, List<String> phoneNumbers, long storeNo, double reviewPoint){
+    public ReviewNotificationDto(long orderId, String orderName, List<String> phoneNumbers, long storeNo, double reviewRating){
         super(orderId, orderName, phoneNumbers);
         this.storeNo = storeNo;
-        this.reviewPoint = reviewPoint;
+        this.reviewRating = reviewRating;
     }
 }

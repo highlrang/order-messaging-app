@@ -22,4 +22,6 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long>{
         + "WHERE op.orderProductId = :orderProductId"
         )
     Optional<StoreEntity> findByOrderProductId(long orderProdcutId);
+
+    Optional<StoreEntity> findByStoreNo(long storeNo);
 }

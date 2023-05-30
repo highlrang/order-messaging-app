@@ -2,6 +2,7 @@ package com.myproject.orderapi.review;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -13,6 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.myproject.core.common.enums.ErrorCode;
+import com.myproject.core.common.exception.CustomException;
+import com.myproject.core.order.domain.OrderProductEntity;
+import com.myproject.core.order.repository.OrderProductRepository;
+import com.myproject.core.order.repository.OrderRepository;
 import com.myproject.core.review.domain.ReviewEntity;
 import com.myproject.core.review.repository.ReviewRepository;
 import com.myproject.orderapi.review.dto.ReviewRequestDto;
@@ -24,6 +30,7 @@ import lombok.Getter;
 public class ReviewServiceTest {
     
     @Mock ReviewRepository reviewRepository;
+    @Mock OrderProductRepository orderProductRepository;
     @InjectMocks ReviewService reviewService;
 
     @Test
@@ -34,8 +41,11 @@ public class ReviewServiceTest {
         long orderId = 1l;
         ReviewRequestDto givenReviewDto = new ReviewRequestDto();
         ReviewEntity givenReviewEntity = ReviewEntity.builder().orderId(orderId).build();
+        OrderProductEntity givenOrderProduct = OrderProductEntity.builder().orderId(orderId).build();
         when(reviewRepository.save(any(ReviewEntity.class)))
             .thenReturn(givenReviewEntity);
+        when(orderProductRepository.findById(anyLong()))
+            .thenReturn(Optional.ofNullable(givenOrderProduct));
 
         /* ========================= WHEN =========================== */
         ReviewResponseDto reviewResponseDto = reviewService.createReview(givenReviewDto);
@@ -50,8 +60,10 @@ public class ReviewServiceTest {
 
         ReviewResponseDto createReview(ReviewRequestDto reviewRequestDto){
             
+            OrderProductEntity orderProductEntity = orderProductRepository.findById(reviewRequestDto.getOrderProductId())
+                .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
             ReviewEntity reviewEntity = ReviewEntity.builder()
-                                                        .orderId(reviewRequestDto.getOrderId())
+                                                        .orderId(orderProductEntity.getOrderId())
                                                         .reviewPoint(reviewRequestDto.getReviewPoint())
                                                         .reviewContent(reviewRequestDto.getReviewContent())
                                                         .build();
