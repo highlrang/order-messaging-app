@@ -1,4 +1,4 @@
-package com.myproject.core.user.domain;
+package com.myproject.core.review.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,22 +16,18 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@Table(name = "review")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "STORE")
-public class StoreEntity extends UserEntity{
-
-    private long storeNo;
-
-    private String storeName;
-
-    @NotNull
-    private String storeBranch;
-
-    private double storeRating;
+public class ReviewEntity extends BaseEntity{
     
-    public void updateStoreRating(double storeRating) {
-        this.storeRating = storeRating;
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long reviewId;
+    private long orderId;
+    private long storeNo;
+    @NotNull
+    private String reviewContent;
+    private double reviewPoint;
 }
